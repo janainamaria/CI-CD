@@ -1,0 +1,21 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Verificar se o código Python tem erros de sintaxe
+        run: python3 -m py_compile server.py
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Deploy automático no Render
+        run: curl "$RENDER_DEPLOY_HOOK_URL"
